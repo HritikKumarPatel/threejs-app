@@ -456,6 +456,56 @@ renderer.domElement.addEventListener('mouseup', (event) => {
   // console.log(x*20, y*20)
 });
 
+// Initialize the renderer and scene
+// var renderer = new THREE.WebGLRenderer();
+// var scene = new THREE.Scene();
+
+// Initialize the WebXR session
+navigator.xr.requestSession('immersive-vr').then((session) => {
+  // Initialize the VR controllers
+  var controller1 = renderer.xr.getController(0);
+  var controller2 = renderer.xr.getController(1);
+  scene.add(controller1);
+  scene.add(controller2);
+  
+  // Add event listeners for the buttons and joystick
+  controller1.addEventListener('inputsourcechange', function(event) {
+    var inputSource = event.data.handedness === 'left' ? session.inputSources[0] : session.inputSources[1];
+    var gripButton = inputSource.gamepad.buttons[0];
+    var triggerButton = inputSource.gamepad.buttons[1];
+    var thumbstickButton = inputSource.gamepad.buttons[2];
+    var thumbstickX = inputSource.gamepad.axes[0];
+    var thumbstickY = inputSource.gamepad.axes[1];
+    
+    // Use the button and joystick input to interact with the VR environment
+  });
+  
+  controller2.addEventListener('inputsourcechange', function(event) {
+    var inputSource = event.data.handedness === 'left' ? session.inputSources[0] : session.inputSources[1];
+    var gripButton = inputSource.gamepad.buttons[0];
+    var triggerButton = inputSource.gamepad.buttons[1];
+    var thumbstickButton = inputSource.gamepad.buttons[2];
+    var thumbstickX = inputSource.gamepad.axes[0];
+    var thumbstickY = inputSource.gamepad.axes[1];
+    
+    // Use the button and joystick input to interact with the VR environment
+  });
+
+  // Start the VR session
+  session.requestAnimationFrame(animate);
+});
+
+// function animate(timestamp, frame) {
+//   // Update the VR controllers and render the scene
+//   renderer.render(scene, camera);
+//   renderer.xr.update(frame);
+  
+//   // Request the next frame
+//   session.requestAnimationFrame(animate);
+// }
+
+
+
 
 
 function animate() {
