@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="css" href="style/styles.css" />
+</head>
+<!-- <style>
+#overlay {
+  display: none;
+}
+</style> -->
+
+<body>
+<img id="warning" src="14.jpg" style="display: none;">
+<!-- <iframe title="Brandenburg Gate 3D model - Sketchfab" class="c-viewer__iframe" src="https://sketchfab.com/models/1e53262d6b514d40b71870c9cee93b7e/embed?autostart=1&amp;internal=1&amp;tracking=0&amp;ui_ar=0&amp;ui_infos=0&amp;ui_snapshots=1&amp;ui_stop=0&amp;ui_theatre=1&amp;ui_watermark=0" id="api-frame" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking="true" execution-while-out-of-viewport="true" execution-while-not-rendered="true" web-share="true" allowfullscreen=""></iframe> -->
+
+<!-- Add a button to the page -->
+<!-- HTML code for the parent window -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.0/html2canvas.min.js"></script>
+
+<script type="module">
+// import html2canvas from 'html2canvas';
+
+const button = document.createElement('button');
+button.textContent = 'Take Screenshot';
+button.style.position = 'absolute';
+button.style.top = '10px';
+button.style.left = '10px';
+button.style.zIndex = '9999';
+document.body.appendChild(button);
+
+window.addEventListener('message', function(event) {
+  if (event.origin !== 'https://sketchfab.com') {
+    // Ignore messages from other origins
+    return;
+  }
+
+  if (event.data.type === 'screenshot') {
+    const imageData = event.data.imageData;
+    // Do something with the image data
+  }
+});
+
+const screenshotButton = document.querySelector('#screenshot-button');
+button.addEventListener('click', function() {
+  html2canvas(document.body).then(function(canvas) {
+    const imageData = canvas.toDataURL('image/png');
+    window.parent.postMessage({ type: 'screenshot', imageData: imageData }, '*');
+    console.log(imageData)
+  });
+});
+ -->
+
+
+<!-- // Create a button element
+
+
+// // Add the button to the body element
+// document.body.appendChild(button);
+
+// // Add an event listener to the button
+// button.addEventListener('click', function() {
+
+//   // Get a reference to the body element
+//   const body = document.body;
+
+//   // Use html2canvas to capture a screenshot of the body
+//   html2canvas(body).then(canvas => {
+
+//     // Store the canvas element in a variable
+//     const screenshot = canvas;
+
+//     // Do something with the screenshot, such as display it on the page
+//     document.body.appendChild(screenshot);
+//   });
+// });
+
+
+</script> -->
+<!-- <button id="toggle-overlay">Toggle Image Overlay</button>
+
+<div id="overlay" style="position: absolute; top: 50px; left: 50px; width: 200px; height: 200px;">
+  <img src="14.jpg" alt="Image description">
+</div> -->
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/OBJLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/PLYLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/MTLLoader.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/TextureLoader.js"></script> -->
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/jsm/webxr/XRControllerModelFactory.js"></script> -->
+
+<!-- <script src="js/script.js"> -->
+<!-- <script src="js/index.js"></script> -->
+<!-- <script src="js/ply.js"></script> -->
+<script type="module" src="js/script.js"></script>
+</script>
+
+</body>
+</html>
