@@ -392,20 +392,21 @@ const cameraTarget = new THREE.Vector3(0, 0, 0); // Define camera target
 // const controllers = xrManager.controllers;
 const controller1 = renderer.xr.getController(0);
 const controller2 = renderer.xr.getController(1);
-controller1.addEventListener("squeeze", onControllerSqueeze);
-controller2.addEventListener("squeeze", onControllerSqueeze);
-// controllers.forEach((controller) => {
-//   controller.addEventListener("squeeze", onControllerSqueeze);
-// });
 
 // Function to handle controller squeeze event
 function onControllerSqueeze(event) {
   // Check if at least one grip button is squeezed
   if (controller1.grip && controller1.grip.squeezed || controller2.grip && controller2.grip.squeezed) {
     // Disable VR mode
-    renderer.xr.enabled = false;
+    if (renderer.xr.isPresenting) {
+      renderer.xr.getSession().end();
+    }
   }
 }
+
+// Add event listener for squeeze event on both controllers
+controller1.addEventListener("squeezestart", onControllerSqueeze);
+controller2.addEventListener("squeezestart", onControllerSqueeze);
 
 
 
