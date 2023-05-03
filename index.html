@@ -400,10 +400,10 @@ controller2.addEventListener("squeeze", onControllerSqueeze);
 
 // Function to handle controller squeeze event
 function onControllerSqueeze(event) {
-  // Check if both grip buttons are squeezed
-  if (controller1.grip && controller1.grip.squeezed && controller2.grip && controller2.grip.squeezed) {
-    // Exit VR mode
-    renderer.xr.exit();
+  // Check if at least one grip button is squeezed
+  if (controller1.grip && controller1.grip.squeezed || controller2.grip && controller2.grip.squeezed) {
+    // Disable VR mode
+    renderer.xr.enabled = false;
   }
 }
 
