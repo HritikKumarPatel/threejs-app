@@ -262,30 +262,29 @@ renderer.domElement.addEventListener("change", (event)=>{
 const loader = new THREE.GLTFLoader();
 loader.load('./model.gltf', function (gltf) {
 
-    var object = gltf.scene;
+    // var object = gltf.scene;
 
     // Calculate the bounding box of the model
-    var boundingBox = new THREE.Box3().setFromObject(object);
+    var model = gltf.scene;
 
-    // Get the center point of the bounding box
-    var center = boundingBox.getCenter(new THREE.Vector3());
+  // Calculate the bounding box of the model
+  var box = new THREE.Box3().setFromObject( model );
 
-    // Translate the model to the new center position
-    var translation = new THREE.Vector3().subVectors(center, object.position);
-    object.translateX(-3);
-    object.translateY(0);
-    object.translateZ(translation.z);
+  // Calculate the center of the bounding box
+  var center = new THREE.Vector3();
+  box.getCenter( center );
 
-    // Rotate the model to face the camera
-    var cameraDirection = new THREE.Vector3()
-      .subVectors(camera.position, center)
-      .normalize();
-    var angle = Math.atan2(cameraDirection.x, cameraDirection.z);
-    object.rotateY(angle);
+  // Move the model so that its center is at the origin
+  model.position.sub( center );
 
     // Add the model to the scene
-    scene.add(object);
+    scene.add(model);
 
+    // renderer.xr.enabled = true;
+    var vrCamera = renderer.xr.getCamera(camera);
+    console.log(vrCamera.position)
+  vrCamera.position.set(20, 20, 100);
+  model.position.set(-center.x, -center.y, -center.z);
 
 
 
@@ -461,39 +460,39 @@ renderer.domElement.addEventListener('mouseup', (event) => {
 // var scene = new THREE.Scene();
 
 // Initialize the WebXR session
-navigator.xr.requestSession('immersive-vr').then((session) => {
-  // Initialize the VR controllers
-  var controller1 = renderer.xr.getController(0);
-  var controller2 = renderer.xr.getController(1);
-  scene.add(controller1);
-  scene.add(controller2);
+// navigator.xr.requestSession('immersive-vr').then((session) => {
+//   // Initialize the VR controllers
+//   var controller1 = renderer.xr.getController(0);
+//   var controller2 = renderer.xr.getController(1);
+//   scene.add(controller1);
+//   scene.add(controller2);
   
-  // Add event listeners for the buttons and joystick
-  controller1.addEventListener('inputsourcechange', function(event) {
-    var inputSource = event.data.handedness === 'left' ? session.inputSources[0] : session.inputSources[1];
-    var gripButton = inputSource.gamepad.buttons[0];
-    var triggerButton = inputSource.gamepad.buttons[1];
-    var thumbstickButton = inputSource.gamepad.buttons[2];
-    var thumbstickX = inputSource.gamepad.axes[0];
-    var thumbstickY = inputSource.gamepad.axes[1];
+//   // Add event listeners for the buttons and joystick
+//   controller1.addEventListener('inputsourcechange', function(event) {
+//     var inputSource = event.data.handedness === 'left' ? session.inputSources[0] : session.inputSources[1];
+//     var gripButton = inputSource.gamepad.buttons[0];
+//     var triggerButton = inputSource.gamepad.buttons[1];
+//     var thumbstickButton = inputSource.gamepad.buttons[2];
+//     var thumbstickX = inputSource.gamepad.axes[0];
+//     var thumbstickY = inputSource.gamepad.axes[1];
     
-    // Use the button and joystick input to interact with the VR environment
-  });
+//     // Use the button and joystick input to interact with the VR environment
+//   });
   
-  controller2.addEventListener('inputsourcechange', function(event) {
-    var inputSource = event.data.handedness === 'left' ? session.inputSources[0] : session.inputSources[1];
-    var gripButton = inputSource.gamepad.buttons[0];
-    var triggerButton = inputSource.gamepad.buttons[1];
-    var thumbstickButton = inputSource.gamepad.buttons[2];
-    var thumbstickX = inputSource.gamepad.axes[0];
-    var thumbstickY = inputSource.gamepad.axes[1];
+//   controller2.addEventListener('inputsourcechange', function(event) {
+//     var inputSource = event.data.handedness === 'left' ? session.inputSources[0] : session.inputSources[1];
+//     var gripButton = inputSource.gamepad.buttons[0];
+//     var triggerButton = inputSource.gamepad.buttons[1];
+//     var thumbstickButton = inputSource.gamepad.buttons[2];
+//     var thumbstickX = inputSource.gamepad.axes[0];
+//     var thumbstickY = inputSource.gamepad.axes[1];
     
-    // Use the button and joystick input to interact with the VR environment
-  });
+//     // Use the button and joystick input to interact with the VR environment
+//   });
 
-  // Start the VR session
-  session.requestAnimationFrame(animate);
-});
+//   // Start the VR sessi
+//   session.requestAnimationFrame(animate);
+// });
 
 // function animate(timestamp, frame) {
 //   // Update the VR controllers and render the scene
@@ -503,6 +502,41 @@ navigator.xr.requestSession('immersive-vr').then((session) => {
 //   // Request the next frame
 //   session.requestAnimationFrame(animate);
 // }
+// Set up a pinch gesture to control zoom
+var pinchStart = 0;
+var pinchEnd = 0;
+var pinchDelta = 0;
+
+// Set up event listeners for grip and trigger buttons
+var controller1 = renderer.xr.getController( 0 );
+var controller2 = renderer.xr.getController( 1 );
+controller1.addEventListener( 'gripdown', onPinchStart );
+controller2.addEventListener( 'gripdown', onPinchStart );
+controller1.addEventListener( 'gripup', onPinchEnd );
+controller2.addEventListener( 'gripup', onPinchEnd );
+controller1.addEventListener( 'triggerdown', onPinchStart );
+controller2.addEventListener( 'triggerdown', onPinchStart );
+controller1.addEventListener( 'triggerup', onPinchEnd );
+controller2.addEventListener( 'triggerup', onPinchEnd );
+
+function onPinchStart( event ) {
+  pinchStart = getDistance(event.data.gamepad);
+}
+
+function onPinchEnd( event ) {
+  pinchEnd = getDistance(event.data.gamepad);
+  pinchDelta = pinchEnd - pinchStart;
+  pinchStart = pinchEnd;
+  
+  // Adjust the scale of the model based on the pinch gesture
+  model.scale.multiplyScalar( 1 + pinchDelta / 10 );
+}
+
+function getDistance(gamepad) {
+  const dx = gamepad.axes[2];
+  const dy = gamepad.axes[3];
+  return Math.sqrt(dx * dx + dy * dy);
+}
 
 
 
