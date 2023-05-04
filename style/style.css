@@ -1,0 +1,35 @@
+canvas{
+    display: block;
+}
+
+/* Set the position and size of the warning image */
+#warning {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200vw;
+    height: 200vh;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    display: none;
+}
+
+/* Style the warning message */
+#warning p {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 3em;
+    text-align: center;
+}
+
+body {
+    overflow: hidden;
+}
+
+.my-canvas{
+    border: 1px solid rgb(168, 18, 18) !important;
+    overflow: hidden;
+}

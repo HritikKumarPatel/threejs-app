@@ -44,7 +44,7 @@ camera.position.set(0, 0, 50);
 
 // const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-camera.zoom =20; // Set the initial zoom level
+camera.zoom = 6; // Set the initial zoom level
 camera.updateProjectionMatrix(); // Update the camera's projection matrix
 
 // const renderer = new THREE.WebGLRenderer();
@@ -93,39 +93,6 @@ document.body.appendChild(VRButton.createButton(renderer));
 
 renderer.xr.enabled = true;
 
-// Get the XR session and reference space
-// Get the XR session and reference space
-const session = await navigator.xr.requestSession('inline');
-// const referenceSpace = await session.requestReferenceSpace('local');
-console.log(session)
-// Create an XRFrame callback function
-function onXRFrame(time, frame) {
-  // Get the pose of the VR headset
-  console.log('Hello')
-  const pose = frame.getViewerPose();
-
-  // If the pose is valid, calculate the elevation and azimuthal angle
-  if (pose !== null) {
-    const transform = pose.transform;
-    const position = transform.position;
-    const orientation = transform.orientation;
-
-    // Calculate the elevation and azimuthal angle
-    const elevation = Math.atan2(position.y, Math.sqrt(position.x * position.x + position.z * position.z));
-    const azimuthal = Math.atan2(-position.z, position.x) - Math.PI / 2 - orientation.y;
-
-    // Print the elevation and azimuthal angle
-    console.log("Elevation:", elevation);
-    console.log("Azimuthal:", azimuthal);
-  }
-
-  // Request the next animation frame
-  session.requestAnimationFrame(onXRFrame);
-}
-
-// Start the animation loop
-session.requestAnimationFrame(onXRFrame);
-
 
 
 // document.body.appendChild(VRButton.createButton(renderer));
@@ -151,7 +118,7 @@ renderer.domElement.addEventListener("change", (event)=>{
 
 // Load the 3D model using Three.js's GLTFLoader
 const loader = new THREE.GLTFLoader();
-loader.load('../model.gltf', function (gltf) {
+loader.load('heli.gltf', function (gltf) {
 
     var object = gltf.scene;
 
@@ -189,21 +156,11 @@ loader.load('../model.gltf', function (gltf) {
 // scene.add(ambientLight);
 
 
-const directionalLight = new THREE.DirectionalLight(0xfffffff, 1);
-directionalLight.position.set(0, -1, -1);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(0, 1, 1);
 scene.add(directionalLight);
 
-const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight1.position.set(1, 0, 1);
-scene.add(directionalLight1);
 
-const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight2.position.set(0, 0, 1);
-scene.add(directionalLight2);
-
-const directionalLight3 = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight3.position.set(0, 1, 0);
-scene.add(directionalLight3);
 
 
 
@@ -228,126 +185,6 @@ scene.add(directionalLight3);
 
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-
-
-var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2();
-
-// add event listener to canvas for mouse click
-canvas.addEventListener(
-  "dblclick",
-  function (event) {
-    // calculate mouse position in normalized device coordinates
-    mouse.x = (event.clientX / canvas.clientWidth) * 2 - 1;
-    mouse.y = -(event.clientY / canvas.clientHeight) * 2 + 1;
-
-    // update the picking ray with the camera and mouse position
-    raycaster.setFromCamera(mouse, camera);
-
-    // calculate objects intersecting the picking ray
-    var intersects = raycaster.intersectObjects(scene.children, true);
-
-    if (intersects.length > 0) {
-      // set the intersection point as the new center of the model
-      var newCenter = intersects[0].point;
-      controls.target.set(newCenter.x, newCenter.y, newCenter.z);
-
-      // update the camera position to zoom in on the new center
-      var distance = camera.position.distanceTo(newCenter);
-      camera.position.set(newCenter.x, newCenter.y, newCenter.z + distance);
-      controls.update();
-    }
-  },
-  false
-);
-
-controls.target.set(0, 0.7, 0);
-
-// update the camera position to zoom in on the new center
-//   var distance = camera.position.distanceTo(newCenter);
-//   camera.position.set(0, 0,2);
-controls.update();
-let isDragging = false;
-let previousMousePosition = {
-  x: 0,
-  y: 0
-};
-const cameraTarget = new THREE.Vector3(0, 0, 0); // Define camera target
-
-
-// Assuming the camera and model are defined and initialized
-
-// Get the camera's direction vector
-
-
-
-
-renderer.domElement.addEventListener('mousedown', (event) => {
-  if (event.button !== 0) { // Check that the left mouse button was clicked
-    return;
-  }
-  isDragging = true;
-  previousMousePosition = {
-    x: event.clientX,
-    y: event.clientY
-  };
-});
-
-renderer.domElement.addEventListener('mousemove', (event) => {
-  if (isDragging) {
-    const deltaMove = {
-      x: event.clientX - previousMousePosition.x,
-      y: event.clientY - previousMousePosition.y
-    };
-    // Do something with the delta move, e.g. rotate the camera
-    camera.rotation.y += deltaMove.x * 0.01;
-    camera.rotation.x += deltaMove.y * 0.01;
-    previousMousePosition = {
-      x: event.clientX,
-      y: event.clientY
-    };
-  }
-});
-
-var elev;
-var azi;
-
-
-renderer.domElement.addEventListener('mouseup', (event) => {
-  if (event.button !== 0) { // Check that the left mouse button was released
-    return;
-  }
-  isDragging = false;
-  // Calculate the camera angles and print them to the console
-  const direction = new THREE.Vector3().subVectors(cameraTarget, camera.position);
-  const azimuthalAngle = Math.atan2(direction.x, direction.z);
-  const elevationAngle = Math.atan2(direction.y, Math.sqrt(direction.x * direction.x + direction.z * direction.z));
-  const angles = {
-    elevation: THREE.MathUtils.radToDeg(elevationAngle),
-    azimuthal: THREE.MathUtils.radToDeg(azimuthalAngle)
-  };
-
-
-
-  
-  var x = Math.floor(angles.elevation.toFixed(2)/7)
-  var y = Math.floor(angles.azimuthal.toFixed(2)/8)
-  console.log(`Elevation: ${x}°, Azimuthal: ${y}°`);
-  elev = x;
-  azi = y;
-  // console.log(`Elevation: ${(x+1)*20}°, Azimuthal: ${y*20}°`);
-  // console.log(`Elevation: ${x*20}°, Azimuthal: ${(y+1)*20}°`);
-  // console.log(`Elevation: ${(x-1)*20}°, Azimuthal: ${y*20}°`);
-  // console.log(`Elevation: ${x*20}°, Azimuthal: ${(y-1)*20}°`);
-  // console.log(`Elevation: ${(x-1)*20}°, Azimuthal: ${(y-1)*20}°`);
-  // console.log(`Elevation: ${(x+1)*20}°, Azimuthal: ${(y+1)*20}°`);
-  // console.log(`Elevation: ${(x+1)*20}°, Azimuthal: ${(y-1)*20}°`);
-  // console.log(`Elevation: ${(x-1)*20}°, Azimuthal: ${(y+1)*20}°`);
-  console.log("________END________")
-  // console.log(x*20, y*20)
-});
-
-
 
 function animate() {
   renderer.setAnimationLoop(function () {

@@ -1,6 +1,6 @@
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
-  140,
+  75,
   window.innerWidth / window.innerHeight,
   0.1,
   100000
@@ -19,9 +19,7 @@ renderer.domElement.className = "my-canvas";
 // Create a PLYLoader object
 const loader = new THREE.PLYLoader();
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Your code that loads the PLY file goes here
-  // Load a PLY file
+// Load a PLY file
 loader.load(
   '../brandenburg_gate.ply',
   function (geometry) {
@@ -53,23 +51,12 @@ loader.load(
     console.error('An error occurred while loading the PLY file', error);
   }
 );
-});
 
 
 
-
-
-
-
-const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-directionalLight.position.set(1, 1, 1);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.1);
+directionalLight.position.set(0, 0, 1);
 scene.add(directionalLight);
-const directionalLight1 = new THREE.DirectionalLight(0xffffff, 2);
-directionalLight1.position.set(1, 0, 9);
-scene.add(directionalLight1);
-const directionalLight2 = new THREE.DirectionalLight(0xffffff, 2);
-directionalLight2.position.set(1, 8, 1);
-scene.add(directionalLight2);
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
