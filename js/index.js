@@ -2,12 +2,12 @@ import { VRButton } from "https://cdn.jsdelivr.net/npm/three@latest/examples/jsm
 // import { XRControllerModelFactory } from "https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/webxr/XRControllerModelFactory.js";
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
-  75,
+  140,
   window.innerWidth / window.innerHeight,
   0.1,
-  1000
+  10000
 );
-camera.position.set(0, 0, 50);
+camera.position.set(0, 0, 20);
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -17,7 +17,7 @@ document.body.appendChild(renderer.domElement);
 renderer.domElement.className = "my-canvas";
 // renderer.domElement.style.border = "4px solid red";
 
-camera.zoom = 60; // Set the initial zoom level
+camera.zoom = 120; // Set the initial zoom level
 camera.updateProjectionMatrix(); // Update the camera's projection matrix
 
 
@@ -37,7 +37,7 @@ loader.load("model.gltf", function (model) {
 // document.body.appendChild(VRButton.createButton(renderer));
 
 // renderer.xr.enabled = true;
-
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 
 const angleRanges = [
@@ -367,8 +367,9 @@ const mesh = new THREE.Mesh(geometry, material);
 mesh.position.set(0,0, -2);
 
 var flag = false;
-
-
+controls.enabled = true;
+var controls2 = new THREE.OrbitControls(camera, renderer.domElement);
+controls2.enabled = false;
 renderer.domElement.addEventListener("wheel", (event) => {
   // Adjust the camera's zoom based on the event's deltaY property
 
@@ -384,8 +385,10 @@ renderer.domElement.addEventListener("wheel", (event) => {
 
 
   // Toggle canvas and warning visibility based on zoom level
-  if (zoom < 5) {
+  if (zoom < 6) {
     if(flag!=true){
+      controls.enabled = false;
+      controls2.enabled = true;
       scene.remove(model1);
       const newImage = getImageNameForAngles(elev, azi);
       // const myImage = document.createElement("img");
@@ -398,7 +401,9 @@ renderer.domElement.addEventListener("wheel", (event) => {
     
   }
   // If the zoom level is above the threshold and the mesh is currently shown, hide it
-  else if (zoom >= 5) {
+  else{
+    controls.enabled = true;
+controls2.enabled = false;
     scene.remove(mesh);
     scene.add(model1);
     flag = false
@@ -431,7 +436,7 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
 directionalLight.position.set(1, 1, 1);
 scene.add(directionalLight);
 
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
 
 var canvas = document.getElementsByTagName("body")[0];
 
@@ -456,11 +461,12 @@ canvas.addEventListener(
       // set the intersection point as the new center of the model
       var newCenter = intersects[0].point;
       controls.target.set(newCenter.x, newCenter.y, newCenter.z);
-
+      controls2.target.set(newCenter.x, newCenter.y, newCenter.z);
       // update the camera position to zoom in on the new center
       var distance = camera.position.distanceTo(newCenter);
       camera.position.set(newCenter.x, newCenter.y, newCenter.z + distance);
       controls.update();
+      controls2.update()
     }
   },
   false
@@ -509,8 +515,10 @@ controls.update();
 
 function animate() {
   requestAnimationFrame(animate);
-  renderer.render(scene, camera);
   controls.update()
+  controls2.update()
+  renderer.render(scene, camera);
+  
 }
 
 
