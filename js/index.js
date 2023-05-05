@@ -17,7 +17,7 @@ document.body.appendChild(renderer.domElement);
 renderer.domElement.className = "my-canvas";
 // renderer.domElement.style.border = "4px solid red";
 
-camera.zoom = 120; // Set the initial zoom level
+camera.zoom = 150; // Set the initial zoom level
 camera.updateProjectionMatrix(); // Update the camera's projection matrix
 
 
